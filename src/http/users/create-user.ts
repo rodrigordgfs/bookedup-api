@@ -8,7 +8,7 @@ export const createUserRoute: FastifyPluginCallbackZod = (app) => {
     {
       schema: {
         body: z.object({
-          id: z.string().regex(/^user_[a-zA-Z0-9]+$/, "ID do usuário deve ser um ID válido do Clerk (ex: user_xxx...)"),
+          id: z.string().regex(/^user_[a-zA-Z0-9]+$/, "ID do usuário deve ser um ID válido do Clerk (ex: user_xxx...)") ,
           email: z.string().email("E-mail inválido."),
         }),
       },
@@ -19,12 +19,12 @@ export const createUserRoute: FastifyPluginCallbackZod = (app) => {
         // Verifica se já existe usuário com o mesmo id
         const existingById = await prisma.user.findUnique({ where: { id } });
         if (existingById) {
-          return reply.status(409).send({ error: "Já existe um usuário com este ID." });
+          return reply.status(200).send(existingById);
         }
         // Verifica se já existe usuário com o mesmo email
         const existingByEmail = await prisma.user.findUnique({ where: { email } });
         if (existingByEmail) {
-          return reply.status(409).send({ error: "Já existe um usuário com este e-mail." });
+          return reply.status(200).send(existingByEmail);
         }
         const user = await prisma.user.create({
           data: {
