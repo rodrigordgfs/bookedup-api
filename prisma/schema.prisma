@@ -50,9 +50,11 @@ model Client {
   totalAppointments Int            @default(0)
   lastVisit         DateTime?
   appointments      Appointment[]
+  userId            String
+  user              User           @relation(fields: [userId], references: [id])
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
-  Notification      Notification[]
+  Notification      Notification[] @relation("ClientNotifications")
 
   @@map("clients")
 }
@@ -66,6 +68,8 @@ model Staff {
   workingHours String?
   active       Boolean       @default(true)
   appointments Appointment[] @relation("StaffAppointments")
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
@@ -82,6 +86,8 @@ model Service {
   categoryId   Int
   category     Category      @relation(fields: [categoryId], references: [id])
   appointments Appointment[]
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
@@ -93,6 +99,8 @@ model Category {
   name      String    @unique
   active    Boolean   @default(true)
   services  Service[]
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -113,6 +121,8 @@ model Appointment {
   price          Float
   status         AppointmentStatus
   notes          String?
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
@@ -124,7 +134,9 @@ model Notification {
   type      NotificationType
   data      Json?
   clientId  Int?
-  client    Client?          @relation(fields: [clientId], references: [id])
+  client    Client?          @relation("ClientNotifications", fields: [clientId], references: [id])
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
   timestamp DateTime         @default(now())
 
   @@map("notifications")
@@ -135,9 +147,26 @@ model Report {
   type      ReportType
   period    String // Ex: '2024-06', '2024-Q1', etc
   data      Json
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
   createdAt DateTime   @default(now())
 
   @@map("reports")
+}
+
+model User {
+  id              String           @id // id do usuário no Clerk
+  email           String           @unique
+  clients         Client[]
+  staff           Staff[]
+  services        Service[]
+  categories      Category[]
+  appointments    Appointment[]
+  notifications   Notification[]
+  reports         Report[]
+  businessConfigs BusinessConfig[]
+
+  @@map("users")
 }
 
 model BusinessConfig {
@@ -148,6 +177,8 @@ model BusinessConfig {
   address      String
   description  String?
   workingHours Json
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

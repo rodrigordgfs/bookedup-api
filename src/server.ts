@@ -6,6 +6,7 @@ import {
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { env } from "./env.ts";
+import { createUserRoute } from "./http/users/create-user.ts";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -20,7 +21,7 @@ app.get("/health", () => {
   return { status: "ok" };
 });
 
-// app.register(getRoomsRoute);
+app.register(createUserRoute);
 
 app.listen({ port: env.PORT }, (err, address) => {
   if (err) {
