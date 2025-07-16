@@ -40,8 +40,18 @@ enum ReportType {
   performance
 }
 
+enum ActivityType {
+  appointment_confirmed
+  new_client
+  appointment_rescheduled
+  appointment_cancelled
+  payment_received
+  service_completed
+  reminder_sent
+}
+
 model Client {
-  id                Int            @id @default(autoincrement())
+  id                String         @id @default(uuid())
   name              String
   email             String         @unique
   phone             String
@@ -55,12 +65,13 @@ model Client {
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   Notification      Notification[] @relation("ClientNotifications")
+  activities        Activity[]
 
   @@map("clients")
 }
 
 model Staff {
-  id           Int           @id @default(autoincrement())
+  id           String        @id @default(uuid())
   name         String
   email        String        @unique
   phone        String
@@ -77,13 +88,13 @@ model Staff {
 }
 
 model Service {
-  id           Int           @id @default(autoincrement())
+  id           String        @id @default(uuid())
   name         String
   description  String?
   duration     Int // minutos
   price        Float
   active       Boolean       @default(true)
-  categoryId   Int
+  categoryId   String
   category     Category      @relation(fields: [categoryId], references: [id])
   appointments Appointment[]
   userId       String
@@ -95,7 +106,7 @@ model Service {
 }
 
 model Category {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   name      String    @unique
   active    Boolean   @default(true)
   services  Service[]
@@ -108,12 +119,12 @@ model Category {
 }
 
 model Appointment {
-  id             Int               @id @default(autoincrement())
-  clientId       Int
+  id             String            @id @default(uuid())
+  clientId       String
   client         Client            @relation(fields: [clientId], references: [id])
-  serviceId      Int
+  serviceId      String
   service        Service           @relation(fields: [serviceId], references: [id])
-  professionalId Int
+  professionalId String
   professional   Staff             @relation("StaffAppointments", fields: [professionalId], references: [id])
   date           DateTime
   time           String // ou DateTime se preferir
@@ -130,10 +141,10 @@ model Appointment {
 }
 
 model Notification {
-  id        Int              @id @default(autoincrement())
+  id        String           @id @default(uuid())
   type      NotificationType
   data      Json?
-  clientId  Int?
+  clientId  String?
   client    Client?          @relation("ClientNotifications", fields: [clientId], references: [id])
   userId    String
   user      User             @relation(fields: [userId], references: [id])
@@ -143,7 +154,7 @@ model Notification {
 }
 
 model Report {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(uuid())
   type      ReportType
   period    String // Ex: '2024-06', '2024-Q1', etc
   data      Json
@@ -165,12 +176,13 @@ model User {
   notifications   Notification[]
   reports         Report[]
   businessConfigs BusinessConfig[]
+  activities      Activity[]
 
   @@map("users")
 }
 
 model BusinessConfig {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(uuid())
   name         String
   email        String
   phone        String
@@ -183,4 +195,16 @@ model BusinessConfig {
   updatedAt    DateTime @updatedAt
 
   @@map("business_configs")
+}
+
+model Activity {
+  id        String       @id @default(uuid())
+  type      ActivityType
+  clientId  String?
+  client    Client?      @relation(fields: [clientId], references: [id])
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id])
+  createdAt DateTime     @default(now())
+
+  @@map("activity")
 }

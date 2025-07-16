@@ -1,6 +1,7 @@
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { z } from "zod/v4";
 import { prisma } from "../../lib/prisma.ts";
+import { registerActivity } from "../../lib/activity-utils.ts";
 
 export const createUserRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
@@ -32,6 +33,8 @@ export const createUserRoute: FastifyPluginCallbackZod = (app) => {
             email,
           },
         });
+
+        await registerActivity({ type: "new_client", userId: id });
         return reply.status(201).send(user);
       } catch (error) {
         return reply.status(400).send({ error: "Erro ao criar usuário", details: error });
