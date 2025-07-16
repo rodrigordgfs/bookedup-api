@@ -3,6 +3,7 @@
   "_version": "24.0.0",
   "compilerOptions": {
     "lib": [
+      "dom",
       "es2024",
       "ESNext.Array",
       "ESNext.Collection",
@@ -17,6 +18,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node16",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["node"]
   }
 }
