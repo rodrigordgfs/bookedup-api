@@ -15,6 +15,10 @@ import { createServiceRoute } from "./http/services/create-service.ts";
 import { getServicesRoute } from "./http/services/get-services.ts";
 import { updateServiceRoute } from "./http/services/update-service.ts";
 import { deleteServiceRoute } from "./http/services/delete-service.ts";
+import { createStaffRoute } from "./http/staff/create-staff.ts";
+import { getStaffsRoute } from "./http/staff/get-staffs.ts";
+import { deleteStaffRoute } from "./http/staff/delete-staff.ts";
+import { updateStaffRoute } from "./http/staff/update-staff.ts";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -44,6 +48,12 @@ app.register(createServiceRoute);
 app.register(getServicesRoute);
 app.register(updateServiceRoute);
 app.register(deleteServiceRoute);
+
+// Staff
+app.register(createStaffRoute);
+app.register(getStaffsRoute);
+app.register(updateStaffRoute);
+app.register(deleteStaffRoute);
 
 app.listen({ port: env.PORT }, (err, address) => {
   if (err) {

@@ -7,7 +7,7 @@
     "build": "tsc",
     "prestart": "prisma generate && prisma migrate deploy && npm run build",
     "start": "node dist/server.js",
-    "dev": "node --env-file .env --experimental-strip-types --no-warnings --watch src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:generate": "prisma generate",
     "prisma:migrate-deploy": "prisma migrate deploy",
@@ -20,8 +20,9 @@
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
-    "@types/node": "^24.0.11",
+    "@types/node": "^24.0.14",
     "prisma": "^6.12.0",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3",
     "ultracite": "5.0.32"
   },
